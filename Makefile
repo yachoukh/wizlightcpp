@@ -31,7 +31,7 @@ CPPFLAGS		+= -I$(INCLUDEDIR)
 CPPFLAGS		+= -I$(CURR_DIR)/include
 
 ## Build dirs
-bin_name        = wizcontrol
+bin_name        = wizlightcpp
 build_config	= $(VIP_NAME)
 build_dir       = $(CURR_DIR)/.build_$(build_config)
 
