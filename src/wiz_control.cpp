@@ -1,5 +1,5 @@
 /***************************************************************************
- *  Project                WIZ_CONTROL     
+ *  Project                WIZLIGHTCPP     
  *
  * Copyright (C) 2022 , Sri Balaji S.
  *
@@ -35,6 +35,7 @@ using namespace std;
 const std::string UDP_WIZ_CONTROL_BULB_IP       = "192.168.1.152";
 const int UDP_WIZ_BROADCAST_BULB_PORT           = 38899;
 
+
 WizControl& WizControl::getInstance() {
     static WizControl instance;
     return instance;
@@ -43,6 +44,9 @@ WizControl& WizControl::getInstance() {
 WizControl::WizControl() 
     :   m_bCastSock(-1)
 {
+    m_cmdmap.insert({"on", "{\"id\":1,\"method\":\"setState\",\"params\":{\"state\":true}}"});
+    m_cmdmap.insert({"off", "{\"id\":1,\"method\":\"setState\",\"params\":{\"state\":false}}"});
+    m_cmdmap.insert({"status", "{\"method\":\"getPilot\",\"params\":{}}"});
 }
 
 WizControl::~WizControl() {
@@ -53,7 +57,9 @@ void WizControl::start(const std::string& cmd, std::string arg) {
         LOG_E("Failed to send command to target device ");
         return;
     }
-    sendUDPCommand(cmd, arg, UDP_WIZ_BROADCAST_BULB_PORT);
+
+    std::string wizcmd = m_cmdmap.at(cmd);
+    performWizRequest(cmd, arg);
 }
 
 bool WizControl::initializeWizSetup() {
@@ -77,6 +83,7 @@ bool WizControl::initializeWizSetup() {
         return false;
     }
 
+    LOG_D("UDP socket initialied");
     return true;
 }
 
@@ -87,8 +94,8 @@ std::string WizControl::sendUDPCommand(const std::string& msg, const std::string
         initializeWizSetup();
     }
 
-    LOG_D("sendUDPCommand socket ipAddr %s msg %s port %d", 
-        targetIp.c_str(), msg.c_str(), port);
+    LOG_D("sendUDPCommand socket ipAddr %s cmd %s", targetIp.c_str(), msg.c_str());
+
     struct sockaddr_in ipAddr; 
     memset(&ipAddr, 0, sizeof(ipAddr));   
     ipAddr.sin_family = AF_INET;                 
@@ -117,13 +124,15 @@ std::string WizControl::sendUDPCommand(const std::string& msg, const std::string
     return resp;
 }
 
-std::string WizControl::performWizPostRequest(const std::string& method, const std::string& params) {
+std::string WizControl::performWizRequest(const std::string& method, const std::string& params) {
 
     json_t* root = json_object();
     json_object_set_new(root, "id", json_integer(1));
     json_object_set_new(root, "method", json_string(method.c_str()));
-    json_t *data = json_loads(params.c_str(), 0, NULL);
-    json_object_set_new(root, "params", data);
+    if (!params.empty()) {
+        json_t *data = json_loads(params.c_str(), 0, NULL);
+        json_object_set_new(root, "params", data);
+    }
     std::string msg = json_dumps(root, JSON_COMPACT);
     LOG_D("Wiz Post request %s to Wiz", msg.c_str());
 
@@ -131,16 +140,16 @@ std::string WizControl::performWizPostRequest(const std::string& method, const s
     return getResponse(resp, 200);
 }
 
-std::string WizControl::performWizGetRequest(const std::string& method) {
+// std::string WizControl::performWizGetRequest(const std::string& method) {
 
-    json_t* root = json_object();
-    json_object_set_new(root, "method", json_string(method.c_str()));
-    std::string msg = json_dumps(root, JSON_COMPACT);
-    LOG_D("Wiz Get request %s", msg.c_str());
+//     json_t* root = json_object();
+//     json_object_set_new(root, "method", json_string(method.c_str()));
+//     std::string msg = json_dumps(root, JSON_COMPACT);
+//     LOG_D("Wiz Get request %s", msg.c_str());
 
-    std::string resp = sendUDPCommand(msg, UDP_WIZ_CONTROL_BULB_IP, UDP_WIZ_BROADCAST_BULB_PORT);
-    return getResponse(resp, 200);
-}
+//     std::string resp = sendUDPCommand(msg, UDP_WIZ_CONTROL_BULB_IP, UDP_WIZ_BROADCAST_BULB_PORT);
+//     return getResponse(resp, 200);
+// }
 
 std::string WizControl::getResponse(std::string jsonStr, int statusCode) {
 

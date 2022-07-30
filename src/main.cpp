@@ -1,5 +1,5 @@
 /***************************************************************************
- *  Project                WIZ_CONTROL     
+ *  Project                WIZLIGHTCPP     
  *
  * Copyright (C) 2022 , Sri Balaji S.
  *

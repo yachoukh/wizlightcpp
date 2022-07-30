@@ -1,12 +1,13 @@
 #include <iostream>
+#include <map>
 
 class WizControl
 {
 public:
     static WizControl& getInstance();
     void start(const std::string& cmd, std::string arg = "");
-    std::string performWizPostRequest(const std::string& method, const std::string& params);
-    std::string performWizGetRequest(const std::string& method);
+    std::string performWizRequest(const std::string& method, const std::string& params);
+    // std::string performWizGetRequest(const std::string& method);
 
 private:
     bool initializeWizSetup();
@@ -16,4 +17,5 @@ private:
     ~WizControl();
 
     int m_bCastSock;
+    std::map<std::string, std::string> m_cmdmap;
 };

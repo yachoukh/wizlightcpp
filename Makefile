@@ -46,6 +46,7 @@ all_objs		= $(bin_objs)
 ## Build rules
 all: $(build_dir) $(bin_target)
 	$(HUSH) echo "DONE!"
+	$(HUSH) echo "Application installed here: $(bin_target)"
 
 clean:
 	$(HUSH) rm -rf $(build_dir)
@@ -55,7 +56,7 @@ $(build_dir):
 	$(HUSH) mkdir -p $(build_dir)/src
 	
 $(build_dir)/%.o: %.cpp
-	$(HUSH) echo "[[Compiling]] <<<----- $<"
+	$(HUSH) echo "[Compiling] <<<----- $<"
 	$(HUSH) $(CXX) $(CPPFLAGS) -c -o $@ $<
 
 $(bin_target): $(all_objs)
