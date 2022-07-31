@@ -22,7 +22,7 @@
 #include <algorithm>
 #include <cctype>
 #include <clocale>
-#include "wiz_control.h"
+#include "wizControl.h"
 
 std::vector<std::string> g_cmd = {"on", "off", "status"};
 
