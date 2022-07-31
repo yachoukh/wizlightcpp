@@ -15,6 +15,7 @@ namespace L {
 
     enum LEVEL { f, e, w, i, d };
 
+    void setLogLevel(LEVEL level);
     void log(LEVEL level, const char *format, ...);
     std::string getLogDetails(LEVEL level);
     std::string getTimestamp();

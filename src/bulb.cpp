@@ -25,12 +25,6 @@ Bulb::Bulb(const std::string& ip, const int& port)
     : m_deviceIp(ip),
       m_port(port)
 {
-    m_methodMap = {
-        {"on", "setState"},
-        {"off", "setState"},
-        {"status", "getPilot"}
-    }; 
-
     m_paramMap = {
     };
 }
@@ -39,31 +33,78 @@ Bulb::~Bulb()
 {
 }
 
-std::string Bulb::setState(std::string cmd, std::string params)
+std::string Bulb::toggleLight(bool state)
 {
-    std::string method = m_methodMap.at(cmd);
+    // std::string method = m_methodMap.at(cmd);
     json_t* root = json_object();
     json_object_set_new(root, "id", json_integer(1));
-    json_object_set_new(root, "method", json_string(method.c_str()));
+    json_object_set_new(root, "method", json_string("setState"));
 
-    if (!params.empty()) {
-        json_t *data = json_loads(params.c_str(), 0, NULL);
-        json_object_set_new(root, "params", data);
-    }
+    json_t *data = json_object();
+    json_object_set_new(data, "state", json_boolean(state));
+    json_object_set_new(root, "params", data);
 
     std::string msg = json_dumps(root, JSON_COMPACT);
-    LOG_D("Wiz setState request %s to Wiz", msg.c_str());
+    LOG_D("Wiz toggleLight request %s to Wiz", msg.c_str());
     return m_sock.sendUDPCommand(msg, m_deviceIp, m_port);
 }
 
-std::string Bulb::getState(std::string cmd)
+std::string Bulb::getStatus()
 {
-    std::string method = m_methodMap.at(cmd);
-
     json_t* root = json_object();
-    json_object_set_new(root, "id", json_integer(1));
-   
+    json_object_set_new(root, "method", json_string("getPilot"));
+
     std::string msg = json_dumps(root, JSON_COMPACT);
-    LOG_D("Wiz getState request %s to Wiz", msg.c_str());
+    LOG_D("Wiz getStatus request %s to Wiz", msg.c_str());
+    return m_sock.sendUDPCommand(msg, m_deviceIp, m_port);
+}
+
+std::string Bulb::getDeviceInfo()
+{
+    json_t* root = json_object();
+    json_object_set_new(root, "method", json_string("getDevInfo"));
+
+    std::string msg = json_dumps(root, JSON_COMPACT);
+    LOG_D("Wiz getDeviceInfo request %s to Wiz", msg.c_str());
+    return m_sock.sendUDPCommand(msg, m_deviceIp, m_port);
+}
+
+std::string Bulb::reboot()
+{
+    json_t* root = json_object();
+    json_object_set_new(root, "method", json_string("reboot"));
+
+    std::string msg = json_dumps(root, JSON_COMPACT);
+    LOG_D("Wiz reboot request %s to Wiz", msg.c_str());
+    return m_sock.sendUDPCommand(msg, m_deviceIp, m_port);
+}
+
+std::string Bulb::getWifiConfig()
+{
+    json_t* root = json_object();
+    json_object_set_new(root, "method", json_string("getWifiConfig"));
+
+    std::string msg = json_dumps(root, JSON_COMPACT);
+    LOG_D("Wiz reboot request %s to Wiz", msg.c_str());
+    return m_sock.sendUDPCommand(msg, m_deviceIp, m_port);
+}
+
+std::string Bulb::getSystemConfig()
+{
+    json_t* root = json_object();
+    json_object_set_new(root, "method", json_string("getSystemConfig"));
+
+    std::string msg = json_dumps(root, JSON_COMPACT);
+    LOG_D("Wiz reboot request %s to Wiz", msg.c_str());
+    return m_sock.sendUDPCommand(msg, m_deviceIp, m_port);
+}
+
+std::string Bulb::getUserConfig()
+{
+    json_t* root = json_object();
+    json_object_set_new(root, "method", json_string("getUserConfig"));
+
+    std::string msg = json_dumps(root, JSON_COMPACT);
+    LOG_D("Wiz reboot request %s to Wiz", msg.c_str());
     return m_sock.sendUDPCommand(msg, m_deviceIp, m_port);
 }

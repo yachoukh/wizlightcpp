@@ -32,6 +32,11 @@ namespace L
     std::map<LEVEL,string> m_lmap {
         {f, "FATAL"}, {e, "ERROR"}, {w, "WARN"}, {i, "INFO"}, {d, "DEBUG"}
     };
+    LEVEL g_level = L::i;
+
+    void setLogLevel(LEVEL level) {
+        g_level = level;
+    }
     
    string getCurrTime() {
         struct timeval curTime;
@@ -58,6 +63,9 @@ namespace L
     }
 
     void log(LEVEL lvl, const char *format, ...) {
+        if (lvl > g_level)
+            return;
+
         string mesg = getLogPrefix(lvl);
         va_list argptr;
 
