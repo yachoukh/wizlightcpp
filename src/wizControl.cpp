@@ -133,8 +133,7 @@ void printUsage()
 
 void printArgsUsage(const std::string& cmd) 
 {
-    std::cout << "Missed required option: <args>\n"
-                 "Try 'wizcontrol " << cmd << " --help' for more information\n"
+    std::cout << "Missed required option: [Args] ipaddress\n"
                  << std::endl;
 }
 
