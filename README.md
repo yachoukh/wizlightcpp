@@ -9,17 +9,35 @@ WiZ is an IoT platform for smart lighting solutions and smart services. WiZ deli
 ## Prerequisites
 Before building, you'll need to install following dependencies
 
+    cmake
     libjansson-dev
 
 ## Building
-wizlightcpp should work with any Linux distribution  
+wizlightcpp should work with any Linux distribution and added cross compilation support.
 
     Tested on:
         X86_64
         Arm
+        
+### Checking out the wizlightcpp
+To check out the wizlightcpp repository:
+
+    git clone https://github.com/sribalajism/wizlightcpp.git
     
-    Features:
-        TODO: Support cross compilation
+### Build
+Use cmake tools to build the wizlightcpp. Run the following commands to build:
+
+    mkdir build
+    cd build
+    cmake ..
+    
+### Cross Compilation
+In order to cross compile this module, use the cmake-tookchains file available in the [toolchain](https://github.com/sribalajism/wizlightcpp/tree/master/cmake/toolchain) directory. Update the arm_toolchain.cmake file with your toolchain details. Refer the sample version in this [example](https://github.com/sribalajism/wizlightcpp/tree/master/cmake/toolchain/example).
+To cross-compile, run the following commands:
+
+    mkdir build_arm
+    cd build_arm
+    cmake  -DCMAKE_TOOLCHAIN_FILE=<path_to_toolchain_cmake_file>/arm_toolchain.cmake ..
         
 ## Supported Features
 Following features are supported now:
