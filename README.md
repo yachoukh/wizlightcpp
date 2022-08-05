@@ -49,3 +49,8 @@ Following features are supported now:
     Get User Configuration
     Get Wifi Configuration
     Get System Configuration
+    Set Brightness
+    Set RGB Color
+    Set Color Temperature
+    Set Speed
+    Set Scene
