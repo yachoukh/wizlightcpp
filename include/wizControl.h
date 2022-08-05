@@ -6,19 +6,22 @@
 class WizControl
 {
 public:
-
     static WizControl& getInstance();
-    bool isCmdSupported(std::string cmd);
-    std::string performWizRequest(const std::string& cmd);
+    bool isCmdSupported(const std::string& cmd);
+    void printArgsUsage(const std::string& cmd);
+    std::string performWizRequest(const std::string& cmd, const std::string& ip);
+
 
 private:
+    void printSceneUsage();
 
     WizControl();
     ~WizControl();
 
     enum WIZCMD {
         on, off, status, reboot,
-        deviceinfo, wificonfig, userconfig, systemconfig
+        getdeviceinfo, getwificonfig, getuserconfig, getsystemconfig,
+      	setbrightness, setrgbcolor, setspeed, setcolor, setscene
     };
     int m_bCastSock;
     Bulb m_bulb;
