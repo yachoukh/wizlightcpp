@@ -1,3 +1,22 @@
+/***************************************************************************
+ *  Project                WIZLIGHTCPP     
+ *
+ * Copyright (C) 2022 , Sri Balaji S.
+ *
+ * This software is licensed as described in the file LICENSE, which
+ * you should have received as part of this distribution.
+ *
+ * You may opt to use, copy, modify, merge, publish, distribute and/or sell
+ * copies of the Software, and permit persons to whom the Software is
+ * furnished to do so, under the terms of the LICENSE file.
+ *
+ * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
+ * KIND, either express or implied.
+ *
+ * @file udp.cpp
+ * 
+ ***************************************************************************/
+
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <sys/types.h>
@@ -70,7 +89,7 @@ std::string UDPSocket::sendUDPCommand(const std::string& msg, const std::string&
                 &len); 
 
     if (n < 0) {
-        LOG_W("sendUDPCommand response from device timedout");
+        LOG_D("device response timedout");
         return resp;
     }
 
@@ -104,9 +123,11 @@ std::string UDPSocket::parseResponse(std::string jsonStr) {
     }
 
     json_object_del(dataObj, "method");
-    json_object_set_new(root, "response", dataObj);
+    json_object_del(dataObj, "id");
+    json_object_del(dataObj, "env");
+    json_object_set_new(root, "bulb_response", dataObj);
 
     std::string output = json_dumps(root, JSON_COMPACT);
-    LOG_D("parseResponse output %s", output.c_str());
+    LOG_D("%s", output.c_str());
 	return output;
 }
