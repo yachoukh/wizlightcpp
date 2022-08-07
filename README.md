@@ -1,10 +1,14 @@
 # wizlightcpp
 
 ## Project Overview
-A cpp application to manage and control the [Wiz](https://www.wizconnected.com/en-us) light devices. wizlightcpp is licensed under the MIT license; see LICENSE in the source distribution for details.
+A cpp application to manage and control the [Wiz](https://www.wizconnected.com/en-us) light devices. This project is developed using native C/C++ language so that it can be ported to any embedded environment. 
 
 ## About Wiz
 WiZ is an IoT platform for smart lighting solutions and smart services. WiZ delivers a Wi-Fi-based smart system that controls plug & play devices with our user-friendly and feature-rich app, and that connects to existing Wi-Fi networks. It also provides ways to dynamic change the light color. [Source](https://www.wizconnected.com/en-us/about-wiz)
+
+## License
+wizlightcpp is licensed under the MIT license; see LICENSE in the source distribution for details.
+
 
 ## Prerequisites
 Before building, you'll need to install following dependencies
