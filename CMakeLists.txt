@@ -7,7 +7,7 @@ SET(CMAKE_CXX_FLAGS  "${GCC_COVERAGE_COMPILE_FLAGS}")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/thirdparty)
 
 add_executable(${PROJECT_NAME} 
-    ${CMAKE_SOURCE_DIR}/src/wizControl.cpp
+    ${CMAKE_SOURCE_DIR}/src/wizcontrol.cpp
     ${CMAKE_SOURCE_DIR}/src/log.cpp
     ${CMAKE_SOURCE_DIR}/src/udp.cpp
     ${CMAKE_SOURCE_DIR}/src/bulb.cpp 

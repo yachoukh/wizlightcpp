@@ -159,7 +159,7 @@ std::string Bulb::reboot()
 */
 std::string Bulb::setBrightness(ushort brightness)
 {
-    if (brightness > 100)
+    if (brightness < 0 || brightness > 100)
         return ERROR_INVALID_REQUEST;
 
     json_t* root = json_object();
@@ -197,7 +197,7 @@ std::string Bulb::setRGBColor(ushort r, ushort g, ushort b)
 
 std::string Bulb::setSpeed(int speed)
 {
-    if (speed < 10 || speed > 200) 
+    if (speed < 0 || speed > 100) 
         return ERROR_INVALID_REQUEST;
 
     json_t* root = json_object();
@@ -209,16 +209,13 @@ std::string Bulb::setSpeed(int speed)
     json_object_set_new(root, "params", data);
 
     std::string msg = json_dumps(root, JSON_COMPACT);
-    LOG_D("Wiz setColorTemp request %s to Wiz", msg.c_str());
+    LOG_D("Wiz setSpeed request %s to Wiz", msg.c_str());
     return m_sock.sendUDPCommand(msg, m_devIP, m_port);
 }
 
-/*White LED - Set the kelvin color temperature 
-min(10000, max(1000, kelvin))*/
 std::string Bulb::setColorTemp(int temp)
 {
-    //temp
-    if (temp < 1000 || temp > 2000) //TODO
+    if (temp < 1000 || temp > 8000)
         return ERROR_INVALID_REQUEST;
 
     json_t* root = json_object();
