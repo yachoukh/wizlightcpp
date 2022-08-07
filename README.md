@@ -22,7 +22,7 @@ wizlightcpp should work with any Linux distribution and added cross compilation 
 ### Checking out the wizlightcpp
 To check out the wizlightcpp repository:
 
-    git clone https://github.com/sribalajism/wizlightcpp.git
+    git clone https://github.com/srisham/wizlightcpp.git
     
 ### Build
 Use cmake tools to build the wizlightcpp. Run the following commands to build:
@@ -53,4 +53,4 @@ Following features are supported now:
     Set RGB Color
     Set Color Temperature
     Set Speed
-    Set Scene
+    Set SceneId
