@@ -230,6 +230,9 @@ std::string Bulb::setScene(ushort scene)
 
 std::string Bulb::parseResponse(std::string jsonStr) {
 
+    if (jsonStr.empty())
+        return jsonStr;
+    
     json_t* root = json_object();
     json_error_t error;
     json_t *data = json_loads(jsonStr.c_str(), 0, &error);
