@@ -50,11 +50,11 @@ If only 'command' passed as input parameter, it will enable the app in interacti
 
     $ wizlightcpp on
     
-In cli mode, user can all pass necessary 'options' in one go. 
+In cli mode, user can all pass necessary 'options' as arguments in one go. 
 
     $ wizlightcpp setbrightness --ip 192.168.20.105 --dim 50
 
-To know the list of 'options' required for each command, run the 'help' command.
+To know the list of 'options' required for each command, run the 'help' option in the following way:
 
     $ wizlightcpp off --help
 
