@@ -10,7 +10,7 @@ add_executable(${PROJECT_NAME}
     ${CMAKE_SOURCE_DIR}/src/wizcontrol.cpp
     ${CMAKE_SOURCE_DIR}/src/log.cpp
     ${CMAKE_SOURCE_DIR}/src/udp.cpp
-    ${CMAKE_SOURCE_DIR}/src/bulb.cpp 
+    ${CMAKE_SOURCE_DIR}/src/bulb.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE

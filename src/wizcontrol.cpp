@@ -27,12 +27,10 @@
 #include <algorithm>
 #include <cctype>
 #include <clocale>
+#include <vector>
 #include "wizcontrol.h"
 #include "log.h"
-#include <vector>
 using namespace std;
-
-const std::string UDP_WIZ_CONTROL_BULB_IP       = "192.168.1.152";
 
 
 void printUsage()
@@ -180,9 +178,9 @@ bool WizControl::validateArgsUsage(const std::vector<std::string>& args)
         if (showArgUsage)
             argUsageList.emplace_back("--dim\t\t\tBrightness level in percent [0 to 100].\n");
         else {
-            int dimness;
-            if (checkArgOptions(args, cmd, "--dim", dimness))
-                ret = m_bulb.setBrightness(dimness);
+            int dimlevel;
+            if (checkArgOptions(args, cmd, "--dim", dimlevel))
+                ret = m_bulb.setBrightness(dimlevel);
         }
     break;
 	case setrgbcolor:
@@ -291,17 +289,19 @@ std::string WizControl::performWizRequest(const std::string& cmd)
     }
     auto eCmd = g_cmdMap.at(cmd);
 
-    std::string ip;
-    while (1) {
-        cout << "Enter the bulb ip address:";
-        getline(cin, ip);
-        if (ip.empty())
-            continue;
-        else
-            break;
+    if (m_bulb.getDeviceIp().empty()) {
+        std::string ip;
+        while (1) {
+            cout << "Enter the bulb IP address:";
+            getline(cin, ip);
+            if (ip.empty())
+                continue;
+            else
+                break;
+        }
+        m_bulb.setDeviceIP(ip);
     }
 
-    m_bulb.setDeviceIP(ip);
     switch (eCmd) {
         case on:
             ret = m_bulb.toggleLight(true);
@@ -380,6 +380,7 @@ std::string WizControl::performWizRequest(const std::string& cmd)
     }
     if (!ret.empty())
         cout << ret << endl;
+
     return ret; 
 }
 
@@ -413,8 +414,6 @@ int main(int argc, char *argv[])
         printUsage();
         return 0;
     }
-
-    cout << args.size() << endl;
 
     if (args.size() == 1)
         wiz.performWizRequest(args.at(0));

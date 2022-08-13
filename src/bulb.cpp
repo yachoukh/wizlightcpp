@@ -25,43 +25,6 @@ const int UDP_WIZ_BROADCAST_BULB_PORT           = 38899;
 const std::string ERROR_INVALID_REQUEST         = "Invalid_Request";
 
 
-    /*
-SCENES = {
-    1: "Ocean",
-    2: "Romance",
-    3: "Sunset",
-    4: "Party",
-    5: "Fireplace",
-    6: "Cozy",
-    7: "Forest",
-    8: "Pastel Colors",
-    9: "Wake up",
-    10: "Bedtime",
-    11: "Warm White",
-    12: "Daylight",
-    13: "Cool white",
-    14: "Night light",
-    15: "Focus",
-    16: "Relax",
-    17: "True colors",
-    18: "TV time",
-    19: "Plantgrowth",
-    20: "Spring",
-    21: "Summer",
-    22: "Fall",
-    23: "Deepdive",
-    24: "Jungle",
-    25: "Mojito",
-    26: "Club",
-    27: "Christmas",
-    28: "Halloween",
-    29: "Candlelight",
-    30: "Golden white",
-    31: "Pulse",
-    32: "Steampunk",
-    1000: "Rhythm",
-}*/
-
 Bulb::Bulb()
     : m_port(UDP_WIZ_BROADCAST_BULB_PORT)
 {
@@ -78,6 +41,11 @@ void Bulb::setDeviceIP(const std::string& ip)
     m_devIP = ip;
 }
 
+std::string Bulb::getDeviceIp() 
+{
+    return m_devIP;
+}
+
 std::string Bulb::getStatus()
 {
     json_t* root = json_object();
@@ -85,7 +53,8 @@ std::string Bulb::getStatus()
 
     std::string msg = json_dumps(root, JSON_COMPACT);
     LOG_D("Wiz getStatus request %s to Wiz", msg.c_str());
-    return m_sock.sendUDPCommand(msg, m_devIP, m_port);
+    auto resp = m_sock.sendUDPCommand(msg, m_devIP, m_port);
+    return parseResponse(resp);
 }
 
 std::string Bulb::getDeviceInfo()
@@ -95,7 +64,8 @@ std::string Bulb::getDeviceInfo()
 
     std::string msg = json_dumps(root, JSON_COMPACT);
     LOG_D("Wiz getDeviceInfo request %s to Wiz", msg.c_str());
-    return m_sock.sendUDPCommand(msg, m_devIP, m_port);
+    auto resp = m_sock.sendUDPCommand(msg, m_devIP, m_port);
+    return parseResponse(resp);
 }
 
 std::string Bulb::getWifiConfig()
@@ -106,6 +76,7 @@ std::string Bulb::getWifiConfig()
     std::string msg = json_dumps(root, JSON_COMPACT);
     LOG_D("Wiz reboot request %s to Wiz", msg.c_str());
     return m_sock.sendUDPCommand(msg, m_devIP, m_port);
+    // return parseResponse(resp); //Currently Wiz light response for Wifi Config unable to parse. Returning actual results
 }
 
 std::string Bulb::getSystemConfig()
@@ -115,7 +86,8 @@ std::string Bulb::getSystemConfig()
 
     std::string msg = json_dumps(root, JSON_COMPACT);
     LOG_D("Wiz reboot request %s to Wiz", msg.c_str());
-    return m_sock.sendUDPCommand(msg, m_devIP, m_port);
+    auto resp = m_sock.sendUDPCommand(msg, m_devIP, m_port);
+    return parseResponse(resp);
 }
 
 std::string Bulb::getUserConfig()
@@ -125,12 +97,12 @@ std::string Bulb::getUserConfig()
 
     std::string msg = json_dumps(root, JSON_COMPACT);
     LOG_D("Wiz reboot request %s to Wiz", msg.c_str());
-    return m_sock.sendUDPCommand(msg, m_devIP, m_port);
+    auto resp = m_sock.sendUDPCommand(msg, m_devIP, m_port);
+    return parseResponse(resp);
 }
 
 std::string Bulb::toggleLight(bool state)
 {
-    // std::string method = m_methodMap.at(cmd);
     json_t* root = json_object();
     json_object_set_new(root, "id", json_integer(1));
     json_object_set_new(root, "method", json_string("setState"));
@@ -140,8 +112,10 @@ std::string Bulb::toggleLight(bool state)
     json_object_set_new(root, "params", data);
 
     std::string msg = json_dumps(root, JSON_COMPACT);
+    std::cout << "Turning light " << (state ? "ON" : "OFF") << std::endl;
     LOG_D("Wiz toggleLight request %s to Wiz", msg.c_str());
-    return m_sock.sendUDPCommand(msg, m_devIP, m_port);
+    auto resp = m_sock.sendUDPCommand(msg, m_devIP, m_port);
+    return parseResponse(resp);
 }
 
 std::string Bulb::reboot()
@@ -150,13 +124,12 @@ std::string Bulb::reboot()
     json_object_set_new(root, "method", json_string("reboot"));
 
     std::string msg = json_dumps(root, JSON_COMPACT);
+    std::cout << "Rebooting..." << std::endl;
     LOG_D("Wiz reboot request %s to Wiz", msg.c_str());
-    return m_sock.sendUDPCommand(msg, m_devIP, m_port);
+    auto resp = m_sock.sendUDPCommand(msg, m_devIP, m_port);
+    return parseResponse(resp);
 }
 
-/*Sample Request
-    {"id":1,"method":"setPilot","params":{"r":0,"g":0,"b":255,"dimming":100}}
-*/
 std::string Bulb::setBrightness(ushort brightness)
 {
     if (brightness < 0 || brightness > 100)
@@ -172,7 +145,8 @@ std::string Bulb::setBrightness(ushort brightness)
 
     std::string msg = json_dumps(root, JSON_COMPACT);
     LOG_D("Wiz setBrightness request %s to Wiz", msg.c_str());
-    return m_sock.sendUDPCommand(msg, m_devIP, m_port);
+    auto resp = m_sock.sendUDPCommand(msg, m_devIP, m_port);
+    return parseResponse(resp);
 }
 
 std::string Bulb::setRGBColor(ushort r, ushort g, ushort b)
@@ -192,7 +166,8 @@ std::string Bulb::setRGBColor(ushort r, ushort g, ushort b)
 
     std::string msg = json_dumps(root, JSON_COMPACT);
     LOG_D("Wiz setRGBColor request %s to Wiz", msg.c_str());
-    return m_sock.sendUDPCommand(msg, m_devIP, m_port);
+    auto resp = m_sock.sendUDPCommand(msg, m_devIP, m_port);
+    return parseResponse(resp);
 }
 
 std::string Bulb::setSpeed(int speed)
@@ -210,7 +185,8 @@ std::string Bulb::setSpeed(int speed)
 
     std::string msg = json_dumps(root, JSON_COMPACT);
     LOG_D("Wiz setSpeed request %s to Wiz", msg.c_str());
-    return m_sock.sendUDPCommand(msg, m_devIP, m_port);
+    auto resp = m_sock.sendUDPCommand(msg, m_devIP, m_port);
+    return parseResponse(resp);
 }
 
 std::string Bulb::setColorTemp(int temp)
@@ -228,7 +204,8 @@ std::string Bulb::setColorTemp(int temp)
 
     std::string msg = json_dumps(root, JSON_COMPACT);
     LOG_D("Wiz setColorTemp request %s to Wiz", msg.c_str());
-    return m_sock.sendUDPCommand(msg, m_devIP, m_port);
+    auto resp = m_sock.sendUDPCommand(msg, m_devIP, m_port);
+    return parseResponse(resp);
 }
 
 /* Scenes from 1 to 32 are supported*/
@@ -247,5 +224,39 @@ std::string Bulb::setScene(ushort scene)
 
     std::string msg = json_dumps(root, JSON_COMPACT);
     LOG_D("Wiz setScene request %s to Wiz", msg.c_str());
-    return m_sock.sendUDPCommand(msg, m_devIP, m_port);
+    auto resp = m_sock.sendUDPCommand(msg, m_devIP, m_port);
+    return parseResponse(resp);
+}
+
+std::string Bulb::parseResponse(std::string jsonStr) {
+
+    json_t* root = json_object();
+    json_error_t error;
+    json_t *data = json_loads(jsonStr.c_str(), 0, &error);
+    if (!data) {
+        LOG_E("JSON error. Parsing error on line %d : %s", error.line, error.text);
+        return "";
+    }
+
+    if (!json_is_object(data)) {
+        LOG_E("JSON error. Parsing error. data is not a object");
+        return "";
+    }
+
+    json_t* dataObj = json_object();
+    json_t* value;
+    for (void *itr = json_object_iter(data); itr != NULL; itr = json_object_iter_next(data, itr)) {
+        const char* key = json_object_iter_key(itr);
+        value = json_object_iter_value(itr);
+        json_object_set(dataObj, key, value);
+    }
+
+    json_object_del(dataObj, "method");
+    json_object_del(dataObj, "id");
+    json_object_del(dataObj, "env");
+    json_object_set_new(root, "bulb_response", dataObj);
+
+    std::string output = json_dumps(root, JSON_INDENT(4));
+    LOG_D("%s", output.c_str());
+	return output;
 }

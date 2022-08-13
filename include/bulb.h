@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <map>
 #include "udp.h"
@@ -10,6 +12,7 @@ public:
     ~Bulb();
 
     void setDeviceIP(const std::string& ip);
+    std::string getDeviceIp();
 
     /*Get APIs*/
     std::string getStatus();
@@ -28,6 +31,8 @@ public:
     std::string setScene(ushort scene);
 
 private:
+    std::string parseResponse(std::string);
+    
     std::string m_devIP;
     u_int16_t m_port;
     std::map<std::string, std::string> m_paramMap;
