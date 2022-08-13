@@ -26,6 +26,10 @@
 #include "udp.h"
 #include "log.h"
 
+const int UDP_REQ_TIMEOUT       = 2;
+const int MAXLINE               = 4096;
+
+
 UDPSocket::UDPSocket()
 {
     initializeUDPSocket();
@@ -49,7 +53,7 @@ bool UDPSocket::initializeUDPSocket() {
     }
 
     struct timeval tv;
-    tv.tv_sec = 1;
+    tv.tv_sec = UDP_REQ_TIMEOUT;
     tv.tv_usec = 0;
     if (setsockopt(m_bCastSock, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0) {
         LOG_E("UDP broadcast socket setsockopt SO_RCVTIMEO error %s", strerror(errno));
@@ -81,53 +85,16 @@ std::string UDPSocket::sendUDPCommand(const std::string& msg, const std::string&
         return "";
     }
 
-    socklen_t len;
-    const int MAXLINE = 1024;
+    socklen_t len = sizeof(ipAddr);
     char resp[MAXLINE] = {};
-    int n = recvfrom(m_bCastSock, (char *)resp, MAXLINE, MSG_WAITALL, 
-        (struct sockaddr *) &ipAddr, 
-                &len); 
+    int n = recvfrom(m_bCastSock, (char *)resp, MAXLINE, MSG_WAITALL, (struct sockaddr *) &ipAddr, &len); 
 
     if (n < 0) {
-        LOG_D("device response timedout");
+        LOG_E("device response timedout error %s", strerror(errno));
         return resp;
     }
 
     resp[n] = '\0'; 
     LOG_D("sendUDPCommand device response: %s", resp);
-    return parseResponse(resp);
-}
-
-
-std::string UDPSocket::parseResponse(std::string jsonStr) {
-
-    json_t* root = json_object();
-    json_error_t error;
-    json_t *data = json_loads(jsonStr.c_str(), 0, &error);
-    if (!data) {
-        LOG_E("JSON error. Parsing error on line %d : %s", error.line, error.text);
-        return "";
-    }
-
-    if (!json_is_object(data)) {
-        LOG_E("JSON error. Parsing error. data is not a object");
-        return "";
-    }
-
-    json_t* dataObj = json_object();
-    json_t* value;
-    for (void *itr = json_object_iter(data); itr != NULL; itr = json_object_iter_next(data, itr)) {
-        const char* key = json_object_iter_key(itr);
-        value = json_object_iter_value(itr);
-        json_object_set(dataObj, key, value);
-    }
-
-    json_object_del(dataObj, "method");
-    json_object_del(dataObj, "id");
-    json_object_del(dataObj, "env");
-    json_object_set_new(root, "bulb_response", dataObj);
-
-    std::string output = json_dumps(root, JSON_COMPACT);
-    LOG_D("%s", output.c_str());
-	return output;
+    return resp;
 }

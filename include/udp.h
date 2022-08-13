@@ -11,7 +11,6 @@ public:
 
 private:
     bool initializeUDPSocket();
-    std::string parseResponse(std::string);
 
     int m_bCastSock;
 };

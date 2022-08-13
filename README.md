@@ -42,7 +42,10 @@ To cross-compile, run the following commands:
     mkdir build_arm
     cd build_arm
     cmake  -DCMAKE_TOOLCHAIN_FILE=<path_to_toolchain_cmake_file>/arm_toolchain.cmake ..
-        
+
+## Usage
+wizlightcpp supports both interactive and cli methods. 
+
 ## Supported Features
 Following features are supported now:
 
@@ -58,3 +61,6 @@ Following features are supported now:
     Set Color Temperature
     Set Speed
     Set SceneId
+
+## Future Improvements
+    Auto discovery of Wiz lights
