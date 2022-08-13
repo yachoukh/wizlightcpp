@@ -45,6 +45,18 @@ To cross-compile, run the following commands:
 
 ## Usage
 wizlightcpp supports both interactive and cli methods. 
+    
+If only 'command' passed as input parameter, it will enable the app in interactive mode. User can enter the command specific inputs to customize the bulb.
+
+    $ wizlightcpp on
+    
+In cli mode, user can all pass necessary 'options' in one go. 
+
+    $ wizlightcpp setbrightness --ip 192.168.20.105 --dim 50
+
+To know the list of 'options' required for each command, run the 'help' command.
+
+    $ wizlightcpp off --help
 
 ## Supported Features
 Following features are supported now:
