@@ -24,7 +24,7 @@ private:
     ~WizControl();
 
     enum WIZCMD {
-        on, off, status, reboot,
+        discover, on, off, status, reboot,
         getdeviceinfo, getwificonfig, getuserconfig, getsystemconfig,
       	setbrightness, setrgbcolor, setspeed, setcolortemp, setscene
     };

@@ -22,6 +22,7 @@
 #include <sys/types.h>
 #include <string.h>
 #include <netinet/in.h>
+#include <unistd.h>
 #include <jansson.h>
 #include "udp.h"
 #include "log.h"
@@ -65,7 +66,7 @@ bool UDPSocket::initializeUDPSocket() {
 }
 
 std::string UDPSocket::sendUDPCommand(const std::string& msg, const std::string& targetIp, 
-    const u_int16_t port) {
+    const u_int16_t port, std::string& broadcastIP) {
     
     if (m_bCastSock < 0) {
         initializeUDPSocket();
@@ -96,5 +97,13 @@ std::string UDPSocket::sendUDPCommand(const std::string& msg, const std::string&
 
     resp[n] = '\0'; 
     LOG_D("sendUDPCommand device response: %s", resp);
+
+    if (!broadcastIP.empty()) {
+        char str[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &(ipAddr.sin_addr), str, INET_ADDRSTRLEN);
+        broadcastIP = str;
+        LOG_D("sendUDPCommand broadcastIP: %s", broadcastIP.c_str());
+    } 
     return resp;
 }
+

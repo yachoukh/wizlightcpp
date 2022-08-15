@@ -15,6 +15,7 @@ public:
     std::string getDeviceIp();
 
     /*Get APIs*/
+    std::string discover(const std::string& ip);
     std::string getStatus();
     std::string getDeviceInfo();
     std::string getWifiConfig();
@@ -31,7 +32,7 @@ public:
     std::string setScene(ushort scene);
 
 private:
-    std::string parseResponse(std::string);
+    std::string parseResponse(std::string, std::string addlParams = "");
     
     std::string m_devIP;
     u_int16_t m_port;
