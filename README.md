@@ -61,6 +61,7 @@ To know the list of 'options' required for each command, run the 'help' option i
 ## Supported Features
 Following features are supported now:
 
+    Auto discovery of Wiz light
     Toggle light
     Get Status
     Get Device Info
@@ -75,4 +76,4 @@ Following features are supported now:
     Set SceneId
 
 ## Future Improvements
-    Auto discovery of Wiz lights
+    Windows Support
