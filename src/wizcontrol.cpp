@@ -43,6 +43,7 @@ void printUsage()
                 << std::endl;
 
     std::cout << "Commands:\n"
+                "  discover\t\t\tDiscover the Wiz bulb on the network\n"
                 "  off\t\t\t\tTurn Off Wiz bulb\n"
                 "  on\t\t\t\tTurn On Wiz bulb\n"
                 "  status\t\t\tGet the current status of Wiz bulb\n"
@@ -148,21 +149,31 @@ bool WizControl::validateArgsUsage(const std::vector<std::string>& args)
     bool showArgUsage = false;
     std::string ipAddr, ret, cmd = args.at(0);
     std::vector<std::string> argUsageList;
+    auto eCmd = g_cmdMap.at(cmd);
 
     if (args.at(1) == "--help") {
         showArgUsage = true;
-        argUsageList.emplace_back("--ip\t\t\tIP address of the bulb.\n");
+        if (eCmd != discover)
+            argUsageList.emplace_back("--ip\t\t\tIP address of the bulb.\n");
         argUsageList.emplace_back("--help\t\t\tShow this message and exit.\n");
     }
     else {
-        if (!checkArgOptions(args, cmd, "--ip", ipAddr))
+        if (eCmd != discover && !checkArgOptions(args, cmd, "--ip", ipAddr))
             return false;
         m_bulb.setDeviceIP(ipAddr);
     }
     
-    auto eCmd = g_cmdMap.at(cmd);
     switch (eCmd)
     {		
+    case discover:
+        if (showArgUsage)
+            argUsageList.emplace_back("--bcast\t\t\tBroadcast IP Address [eg: 192.168.1.255].\n");
+        else {
+            std::string bCastIp;
+            if (checkArgOptions(args, cmd, "--bcast", bCastIp))
+                ret = m_bulb.discover(bCastIp);
+        }
+	break;
 	case on:
 	case off:
 	case status:
@@ -252,6 +263,7 @@ WizControl::WizControl()
     :   m_bCastSock(-1)
 {
     g_cmdMap = {
+        {"discover", discover},
         {"on", on},
         {"off", off},
         {"status", status},
@@ -289,10 +301,10 @@ std::string WizControl::performWizRequest(const std::string& cmd)
     }
     auto eCmd = g_cmdMap.at(cmd);
 
-    if (m_bulb.getDeviceIp().empty()) {
+    if (eCmd != discover && m_bulb.getDeviceIp().empty()) {
         std::string ip;
         while (1) {
-            cout << "Enter the bulb IP address:";
+            cout << "Enter the bulb IP address: ";
             getline(cin, ip);
             if (ip.empty())
                 continue;
@@ -303,6 +315,14 @@ std::string WizControl::performWizRequest(const std::string& cmd)
     }
 
     switch (eCmd) {
+        case discover:
+        {
+            std::string bcastIp;
+            cout << "Enter the broadcast IP Address: ";
+            cin >> bcastIp;
+            ret = m_bulb.discover(bcastIp);
+        }
+        break;
         case on:
             ret = m_bulb.toggleLight(true);
         break;
