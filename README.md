@@ -22,7 +22,6 @@ wizlightcpp should work with any Linux distribution and added cross compilation 
     Tested on:
         X86_64
         Arm
-	macOS
         
 ### Checking out the wizlightcpp
 To check out the wizlightcpp repository:
