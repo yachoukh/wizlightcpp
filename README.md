@@ -30,7 +30,7 @@ To check out the wizlightcpp repository:
     git clone https://github.com/srisham/wizlightcpp.git
     
 ### Build
-Use cmake tools to build the wizlightcpp. Run the following commands to build:
+Use cmake tools to build the wizlightcpp. Run the following commands to build the app:
 
     mkdir build
     cd build
