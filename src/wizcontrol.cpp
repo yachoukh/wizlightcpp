@@ -260,7 +260,6 @@ WizControl& WizControl::getInstance() {
 }
 
 WizControl::WizControl() 
-    :   m_bCastSock(-1)
 {
     g_cmdMap = {
         {"discover", discover},

@@ -45,7 +45,7 @@ namespace L
         
         gettimeofday(&curTime, NULL);
         strftime(tStamp, sizeof(tStamp), "%F %T", localtime(&curTime.tv_sec));
-        snprintf(ms, 5, ".%03ld", curTime.tv_usec/1000);
+        snprintf(ms, 5, ".%03d", (int)curTime.tv_usec/1000);
         sstime << tStamp << ms;        
         return sstime.str();
     }
@@ -53,10 +53,15 @@ namespace L
    string getLogPrefix(LEVEL level) {
         string lvl = m_lmap.at(level);
         string time = getCurrTime();
-        pid_t t_id = syscall(__NR_gettid);
-        std::ostringstream ostrout;
+	std::ostringstream ostrout;
 
-        ostrout << time << " " << program_invocation_short_name;
+#ifdef __GLIBC__
+	pid_t t_id = syscall(__NR_gettid);
+	ostrout << time << " " << program_invocation_short_name;
+#else
+	pid_t t_id = getpid();
+	ostrout << time << " " << getprogname();
+#endif
         ostrout << "(" << std::to_string(t_id) << ") ";
         ostrout << lvl.c_str() << "\t: ";
         return ostrout.str();

@@ -28,7 +28,6 @@ private:
         getdeviceinfo, getwificonfig, getuserconfig, getsystemconfig,
       	setbrightness, setrgbcolor, setspeed, setcolortemp, setscene
     };
-    int m_bCastSock;
     Bulb m_bulb;
     std::map<std::string, WIZCMD> g_cmdMap;
 };

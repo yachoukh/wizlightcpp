@@ -23,7 +23,6 @@
 #include <string.h>
 #include <netinet/in.h>
 #include <unistd.h>
-#include <jansson.h>
 #include "udp.h"
 #include "log.h"
 
